@@ -1,5 +1,6 @@
 import SwiftUI
 import AVFoundation
+import UIKit
 
 struct TasbihView: View {
     @State private var selectedDhikr = dhikrList[0]
@@ -86,6 +87,9 @@ struct TasbihView: View {
             counter += 1
             UserDefaults.standard.set(counter, forKey: "counter")
             if isSoundEnabled { playSound() }
+            if counter >= target && target > 0 {
+                triggerHapticFeedback()
+            }
         }) {
             ZStack {
                 Circle()
@@ -131,6 +135,11 @@ struct TasbihView: View {
     
     private func playSound() {
         audioPlayer?.play()
+    }
+
+    private func triggerHapticFeedback() {
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
     }
 }
 
