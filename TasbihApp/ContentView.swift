@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var isSoundEnabled = UserDefaults.standard.bool(forKey: "isSoundEnabled")
-    @State private var target = UserDefaults.standard.integer(forKey: "target")
+    @AppStorage("isSoundEnabled") private var isSoundEnabled: Bool = false
+    @AppStorage("target") private var target: Int = 0
 
     var body: some View {
         TabView {
