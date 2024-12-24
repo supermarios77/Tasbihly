@@ -9,8 +9,13 @@ struct TasbihView: View {
     @Binding var target: Int
     @State private var showDhikrSelector = false
     @Environment(\.colorScheme) private var colorScheme
+    @AppStorage("selectedThemeIndex") private var selectedThemeIndex: Int = 0
     
     private var audioPlayer: AVAudioPlayer?
+    
+    private var currentTheme: Theme {
+        appThemes[selectedThemeIndex]
+    }
     
     init(isSoundEnabled: Binding<Bool>, target: Binding<Int>) {
         self._isSoundEnabled = isSoundEnabled
@@ -54,6 +59,7 @@ struct TasbihView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showDhikrSelector.toggle() }) {
                         Image(systemName: "list.bullet")
+                            .foregroundColor(currentTheme.primary)
                     }
                 }
             }
@@ -67,17 +73,17 @@ struct TasbihView: View {
         VStack(spacing: 10) {
             Text(selectedDhikr.phrase)
                 .font(.system(size: 32, weight: .bold, design: .rounded))
-                .foregroundColor(.primary)
+                .foregroundColor(currentTheme.textColor)
                 .multilineTextAlignment(.center)
             
             Text(selectedDhikr.transliteration)
                 .font(.system(size: 24, design: .rounded))
-                .foregroundColor(.secondary)
+                .foregroundColor(currentTheme.secondary)
                 .italic()
             
             Text(selectedDhikr.translation)
                 .font(.system(size: 20, design: .rounded))
-                .foregroundColor(.primary)
+                .foregroundColor(currentTheme.textColor)
                 .multilineTextAlignment(.center)
         }
     }
@@ -93,9 +99,9 @@ struct TasbihView: View {
         }) {
             ZStack {
                 Circle()
-                    .fill(counter >= target && target > 0 ? Color.green : Color.accentColor)
+                    .fill(counter >= target && target > 0 ? Color.green : currentTheme.buttonBackground)
                     .frame(width: 200, height: 200)
-                    .shadow(color: Color.accentColor.opacity(0.3), radius: 10, x: 0, y: 5)
+                    .shadow(color: currentTheme.buttonBackground.opacity(0.3), radius: 10, x: 0, y: 5)
                 
                 VStack {
                     Text("\(counter)")
@@ -126,7 +132,7 @@ struct TasbihView: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, 35)
                 .padding(.vertical, 15)
-                .background(Color.accentColor)
+                .background(currentTheme.buttonBackground)
                 .cornerRadius(25)
         }
         .accessibilityLabel("Reset Counter")
