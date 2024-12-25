@@ -47,45 +47,67 @@ struct TasbihView: View {
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 40) {
-                dhikrSection
-                counterButton
-                resetButton
-            }
-            .padding()
-            .navigationTitle("Tasbihly")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { showDhikrSelector.toggle() }) {
-                        Image(systemName: "list.bullet")
-                            .foregroundColor(currentTheme.primary)
+            GeometryReader { geometry in
+                HStack(spacing: 0) {
+                    // Main content
+                    VStack(spacing: geometry.size.height * 0.05) {
+                        dhikrSection
+                            .frame(maxWidth: 600)
+                            .padding(.top, geometry.size.height * 0.05)
+                        
+                        Spacer()
+                        
+                        counterButton
+                            .scaleEffect(geometry.size.width >= 768 ? 1.2 : 1.0)
+                        
+                        Spacer()
+                        
+                        resetButton
+                            .padding(.bottom, geometry.size.height * 0.05)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                }
+                .navigationTitle("Tasbihly")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: { showDhikrSelector.toggle() }) {
+                            Image(systemName: "list.bullet")
+                                .foregroundColor(currentTheme.primary)
+                        }
                     }
                 }
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle())
         .sheet(isPresented: $showDhikrSelector) {
             DhikrSelectorView(dhikrList: dhikrList, selectedDhikr: $selectedDhikr)
         }
     }
     
     private var dhikrSection: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 16) {
             Text(selectedDhikr.phrase)
-                .font(.system(size: 32, weight: .bold, design: .rounded))
+                .font(.system(size: UIDevice.current.userInterfaceIdiom == .pad ? 48 : 32, 
+                             weight: .bold, 
+                             design: .rounded))
                 .foregroundColor(currentTheme.textColor)
                 .multilineTextAlignment(.center)
             
             Text(selectedDhikr.transliteration)
-                .font(.system(size: 24, design: .rounded))
+                .font(.system(size: UIDevice.current.userInterfaceIdiom == .pad ? 36 : 24, 
+                             design: .rounded))
                 .foregroundColor(currentTheme.secondary)
                 .italic()
             
             Text(selectedDhikr.translation)
-                .font(.system(size: 20, design: .rounded))
+                .font(.system(size: UIDevice.current.userInterfaceIdiom == .pad ? 28 : 20, 
+                             design: .rounded))
                 .foregroundColor(currentTheme.textColor)
                 .multilineTextAlignment(.center)
         }
+        .padding(.horizontal)
     }
     
     private var counterButton: some View {
@@ -100,17 +122,22 @@ struct TasbihView: View {
             ZStack {
                 Circle()
                     .fill(counter >= target && target > 0 ? Color.green : currentTheme.buttonBackground)
-                    .frame(width: 200, height: 200)
+                    .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? 300 : 200, 
+                           height: UIDevice.current.userInterfaceIdiom == .pad ? 300 : 200)
                     .shadow(color: currentTheme.buttonBackground.opacity(0.3), radius: 10, x: 0, y: 5)
                 
                 VStack {
                     Text("\(counter)")
-                        .font(.system(size: 60, weight: .bold, design: .rounded))
+                        .font(.system(size: UIDevice.current.userInterfaceIdiom == .pad ? 90 : 60, 
+                                    weight: .bold, 
+                                    design: .rounded))
                         .foregroundColor(.white)
                     
                     if counter >= target && target > 0 {
                         Text("Target reached!")
-                            .font(.system(size: 16, weight: .semibold, design: .rounded))
+                            .font(.system(size: UIDevice.current.userInterfaceIdiom == .pad ? 24 : 16, 
+                                        weight: .semibold, 
+                                        design: .rounded))
                             .foregroundColor(.white)
                     }
                 }

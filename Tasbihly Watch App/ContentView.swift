@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  Tasbihly Watch App
-//
-//  Created by mario on 24/12/2024.
-//
-
 import SwiftUI
 import WatchKit
 

@@ -48,8 +48,8 @@ struct ContentView: View {
                         Label("Settings", systemImage: "gearshape.fill")
                     }
             }
+            .accentColor(currentTheme.primary)
         }
-        .accentColor(currentTheme.primary)
     }
 }
 
