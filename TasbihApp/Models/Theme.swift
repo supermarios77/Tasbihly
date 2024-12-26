@@ -61,14 +61,6 @@ let appThemes = [
         textColor: Color(red: 0.0, green: 0.4, blue: 0.3)
     ),
     Theme(
-        name: "Dark Elegance",
-        primary: .purple,
-        secondary: .gray,
-        background: .gradient([Color(white: 0.1), Color(white: 0.2)]),
-        buttonBackground: .purple,
-        textColor: .white
-    ),
-    Theme(
         name: "Desert",
         primary: Color(red: 0.8, green: 0.6, blue: 0.4),
         secondary: Color(red: 0.6, green: 0.4, blue: 0.2),
