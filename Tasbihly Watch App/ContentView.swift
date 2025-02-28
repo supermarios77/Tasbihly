@@ -60,27 +60,7 @@ struct ContentView: View {
                 incrementCounter()
             }) {
                 ZStack {
-                    // Progress Circle
-                    Circle()
-                        .stroke(Color.green.opacity(0.2), lineWidth: 8)
-                    
-                    Circle()
-                        .trim(from: 0, to: min(CGFloat(counter) / CGFloat(selectedDhikr.count), 1.0))
-                        .stroke(
-                            LinearGradient(
-                                colors: [
-                                    Color.green.opacity(0.8),
-                                    Color.green
-                                ],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            ),
-                            style: StrokeStyle(lineWidth: 8, lineCap: .round)
-                        )
-                        .rotationEffect(.degrees(-90))
-                        .animation(.spring(response: 0.3), value: counter)
-                    
-                    // Main Circle Background
+                    // Main Circle
                     Circle()
                         .fill(
                             LinearGradient(
@@ -92,7 +72,6 @@ struct ContentView: View {
                                 endPoint: .bottomTrailing
                             )
                         )
-                        .padding(15) // Padding inside progress ring
                         .overlay(
                             Circle()
                                 .stroke(
@@ -106,34 +85,41 @@ struct ContentView: View {
                                     ),
                                     lineWidth: 1.5
                                 )
-                                .padding(15)
                         )
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .padding(4)
                         .scaleEffect(isAnimating ? 0.92 : 1)
                     
-                    // Counter and Dhikr Display
-                    VStack(spacing: 4) {
+                    // Counter and Dhikr
+                    VStack(spacing: 6) {
+                        // Total count
                         Text("\(counter)")
-                            .font(.system(size: 68, weight: .bold, design: .rounded))
+                            .font(.system(size: 76, weight: .bold, design: .rounded))
                             .minimumScaleFactor(0.5)
                             .opacity(isAnimating ? 0.8 : 1)
                             .scaleEffect(isAnimating ? 0.95 : 1)
                         
-                        Text("\(counter)/\(selectedDhikr.count)")
+                        // Current set progress
+                        Text("\(counter % selectedDhikr.count)/\(selectedDhikr.count)")
                             .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.white.opacity(0.9))
+                        
+                        // Set counter
+                        Text("Set \((counter / selectedDhikr.count) + 1)")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.white.opacity(0.7))
                         
                         Text(selectedDhikr.transliteration)
                             .font(.system(size: 14, weight: .medium))
                             .lineLimit(1)
                             .opacity(0.9)
-                            .padding(.top, 2)
                     }
                     .foregroundColor(.white)
                 }
             }
             .buttonStyle(PlainButtonStyle())
             
-            // Enhanced Floating Controls
+            // Bottom Controls with Floating Effect
             VStack {
                 Spacer()
                 HStack {
@@ -141,22 +127,12 @@ struct ContentView: View {
                         icon: "arrow.counterclockwise",
                         action: { showingResetConfirmation = true }
                     )
-                    .background(
-                        Circle()
-                            .fill(Color.black.opacity(0.2))
-                            .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
-                    )
                     
                     Spacer()
                     
                     FloatingButton(
                         icon: "text.justify",
                         action: { showingSettings.toggle() }
-                    )
-                    .background(
-                        Circle()
-                            .fill(Color.black.opacity(0.2))
-                            .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
                     )
                 }
                 .padding(.horizontal)
@@ -190,19 +166,15 @@ struct ContentView: View {
             isAnimating = true
             pulseEffect = true
             
-            // Enhanced haptic feedback
+            // Add particle effects
+            if counter.isMultiple(of: 10) {
+                addParticles()
+            }
+            
+            // Play different haptics for target completion
             if counter >= selectedDhikr.count {
                 WKInterfaceDevice.current().play(.success)
                 addCelebrationParticles()
-                // Optional: Auto reset after reaching target
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    withAnimation {
-                        counter = 0
-                    }
-                }
-            } else if counter % 10 == 0 {
-                WKInterfaceDevice.current().play(.notification)
-                addParticles()
             } else {
                 WKInterfaceDevice.current().play(.click)
             }
@@ -268,7 +240,7 @@ class ParticleEffect: Identifiable {
     var size: CGFloat = CGFloat.random(in: 2...4)
 }
 
-// Enhanced FloatingButton
+// Floating Button Component
 struct FloatingButton: View {
     let icon: String
     let action: () -> Void
@@ -288,14 +260,14 @@ struct FloatingButton: View {
                 Circle()
                     .fill(
                         LinearGradient(
-                            colors: [Color.white.opacity(0.3), Color.white.opacity(0.2)],
+                            colors: [Color.white.opacity(0.25), Color.white.opacity(0.15)],
                             startPoint: .top,
                             endPoint: .bottom
                         )
                     )
-                    .frame(width: 40, height: 40)
+                    .frame(width: 44, height: 44)
                 Image(systemName: icon)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.white)
             }
             .scaleEffect(isPressed ? 0.9 : 1)

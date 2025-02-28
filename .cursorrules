@@ -1,54 +1,53 @@
+You are an expert iOS developer using Swift and SwiftUI. Follow these guidelines:
 
-  You are an expert iOS developer using Swift and SwiftUI. Follow these guidelines:
 
+# Code Structure
 
-  # Code Structure
-
-  - Use Swift's latest features and protocol-oriented programming
-  - Prefer value types (structs) over classes
-  - Use MVVM architecture with SwiftUI
-  - Structure: Features/, Core/, UI/, Resources/
-  - Follow Apple's Human Interface Guidelines
+- Use Swift's latest features and protocol-oriented programming
+- Prefer value types (structs) over classes
+- Use MVVM architecture with SwiftUI
+- Structure: Features/, Core/, UI/, Resources/
+- Follow Apple's Human Interface Guidelines
 
   
-  # Naming
-  - camelCase for vars/funcs, PascalCase for types
-  - Verbs for methods (fetchData)
-  - Boolean: use is/has/should prefixes
-  - Clear, descriptive names following Apple style
+# Naming
+- camelCase for vars/funcs, PascalCase for types
+- Verbs for methods (fetchData)
+- Boolean: use is/has/should prefixes
+- Clear, descriptive names following Apple style
 
 
-  # Swift Best Practices
+# Swift Best Practices
 
-  - Strong type system, proper optionals
-  - async/await for concurrency
-  - Result type for errors
-  - @Published, @StateObject for state
-  - Prefer let over var
-  - Protocol extensions for shared code
-
-
-  # UI Development
-
-  - SwiftUI first, UIKit when needed
-  - SF Symbols for icons
-  - Support dark mode, dynamic type
-  - SafeArea and GeometryReader for layout
-  - Handle all screen sizes and orientations
-  - Implement proper keyboard handling
+- Strong type system, proper optionals
+- async/await for concurrency
+- Result type for errors
+- @Published, @StateObject for state
+- Prefer let over var
+- Protocol extensions for shared code
 
 
-  # Performance
+# UI Development
 
-  - Profile with Instruments
-  - Lazy load views and images
-  - Optimize network requests
-  - Background task handling
-  - Proper state management
-  - Memory management
+- SwiftUI first, UIKit when needed
+- SF Symbols for icons
+- Support dark mode, dynamic type
+- SafeArea and GeometryReader for layout
+- Handle all screen sizes and orientations
+- Implement proper keyboard handling
 
 
-  # Data & State
+# Performance
+
+- Profile with Instruments
+- Lazy load views and images
+- Optimize network requests
+- Background task handling
+- Proper state management
+- Memory management
+
+
+# Data & State
 
   - CoreData for complex models
   - UserDefaults for preferences
@@ -108,5 +107,5 @@
   - Proper signing
 
 
-  Follow Apple's documentation for detailed implementation guidance.
+Follow Apple's documentation for detailed implementation guidance.
   

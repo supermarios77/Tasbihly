@@ -11,10 +11,7 @@ struct TasbihView: View {
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("selectedThemeIndex") private var selectedThemeIndex: Int = 0
     @State private var isAnimating = false
-    @State private var pulseEffect = false
-    @State private var particleEffects: [ParticleEffect] = []
-    @State private var rotationAngle: Double = 0
-    @State private var showingCelebration = false
+    @State private var showCompletion = false
     
     private var audioPlayer: AVAudioPlayer?
     
@@ -52,96 +49,64 @@ struct TasbihView: View {
     
     var body: some View {
         NavigationView {
-            GeometryReader { geometry in
-                ZStack {
-                    // Animated Background
-                    Circle()
-                        .fill(
-                            AngularGradient(
-                                gradient: Gradient(colors: [
-                                    currentTheme.buttonBackground.opacity(0.3),
-                                    currentTheme.buttonBackground.opacity(0.1),
-                                    currentTheme.buttonBackground.opacity(0.3)
-                                ]),
-                                center: .center,
-                                startAngle: .degrees(rotationAngle),
-                                endAngle: .degrees(rotationAngle + 360)
-                            )
-                        )
-                        .blur(radius: 20)
-                        .scaleEffect(1.5)
-                    
-                    // Pulse effect
-                    Circle()
-                        .fill(currentTheme.buttonBackground)
-                        .opacity(pulseEffect ? 0.15 : 0)
-                        .scaleEffect(pulseEffect ? 1.8 : 1)
-                    
-                    // Particle effects
-                    ForEach(particleEffects) { particle in
-                        Circle()
-                            .fill(particle.color)
-                            .frame(width: particle.size, height: particle.size)
-                            .offset(particle.position)
-                            .opacity(particle.opacity)
-                            .rotationEffect(.degrees(particle.rotation))
-                    }
-                    
-                    // Main content
-                    VStack(spacing: geometry.size.height * 0.05) {
-                        dhikrSection
-                            .frame(maxWidth: 600)
-                            .padding(.top, geometry.size.height * 0.05)
-                        
-                        Spacer()
-                        
-                        counterButton
-                            .scaleEffect(geometry.size.width >= 768 ? 1.2 : 1.0)
-                        
-                        Spacer()
-                        
-                        resetButton
-                            .padding(.bottom, geometry.size.height * 0.05)
-                    }
-                    
-                    if showingCelebration {
-                        celebrationOverlay
-                            .zIndex(2)
+            ZStack {
+                backgroundGradient
+                
+                GeometryReader { geometry in
+                    HStack(spacing: 0) {
+                        // Main content
+                        VStack(spacing: geometry.size.height * 0.05) {
+                            dhikrSection
+                                .frame(maxWidth: 600)
+                                .padding(.top, geometry.size.height * 0.05)
+                            
+                            Spacer()
+                            
+                            counterButton
+                                .scaleEffect(geometry.size.width >= 768 ? 1.2 : 1.0)
+                            
+                            Spacer()
+                            
+                            resetButton
+                                .padding(.bottom, geometry.size.height * 0.05)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding()
                     }
                 }
-                .onAppear {
-                    withAnimation(.linear(duration: 12).repeatForever(autoreverses: false)) {
-                        rotationAngle = 360
+                .navigationTitle("Tasbihly")
+                .navigationBarTitleDisplayMode(.inline)
+                #if os(iOS16)
+                .toolbarTitleMenu {
+                    Text("Dhikr Counter")
+                        .foregroundColor(currentTheme.headerColor)
+                }
+                #endif
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: { showDhikrSelector.toggle() }) {
+                            Image(systemName: "list.bullet")
+                                .foregroundColor(currentTheme.primary)
+                        }
                     }
                 }
-            }
-            .background(
-                Group {
-                    switch currentTheme.background {
-                    case .solid(let color):
-                        color
-                    case .gradient(let colors):
-                        LinearGradient(
-                            colors: colors,
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    case .pattern(let imageName):
-                        Image(imageName)
-                            .resizable()
-                            .scaledToFill()
-                    }
-                }
-                .ignoresSafeArea()
-            )
-            .navigationTitle("Tasbihly")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { showDhikrSelector.toggle() }) {
-                        Image(systemName: "list.bullet")
-                            .foregroundColor(currentTheme.primary)
-                    }
+                
+                .alert(isPresented: $showCompletion) {
+                    Alert(
+                        title: Text("ما شاء الله"),
+                        message: Text(
+                            """
+                            Set Complete!
+                            
+                            \(selectedDhikr.count) times
+                            Total: \(counter)
+                            Sets: \(counter / selectedDhikr.count)
+                            """
+                        ),
+                        dismissButton: .default(Text("OK")) {
+                            withAnimation { isAnimating = false }
+                        }
+                    )
                 }
             }
         }
@@ -183,181 +148,195 @@ struct TasbihView: View {
     }
     
     private var counterButton: some View {
-        Button(action: {
-            incrementCounter()
-        }) {
-            ZStack {
-                // Progress Circle
-                Circle()
-                    .stroke(currentTheme.buttonBackground.opacity(0.3), lineWidth: 12)
-                
-                Circle()
-                    .trim(from: 0, to: min(CGFloat(counter) / CGFloat(selectedDhikr.count), 1.0))
-                    .stroke(
-                        counter >= selectedDhikr.count ? currentTheme.primary : currentTheme.buttonBackground,
-                        style: StrokeStyle(lineWidth: 12, lineCap: .round)
-                    )
-                    .rotationEffect(.degrees(-90))
-                    .animation(.spring(response: 0.3), value: counter)
-
-                // Main Circle
-                Circle()
-                    .fill(currentTheme.buttonBackground)
-                    .padding(20)
-                    .shadow(color: currentTheme.buttonBackground.opacity(0.3), radius: 10)
-                    .scaleEffect(isAnimating ? 0.95 : 1.0)
-
-                VStack(spacing: 12) {
-                    Text("\(counter)")
-                        .font(.system(size: UIDevice.current.userInterfaceIdiom == .pad ? 90 : 60, 
-                                    weight: .bold, 
-                                    design: .rounded))
-                    
-                    Text("\(counter)/\(selectedDhikr.count)")
-                        .font(.system(size: UIDevice.current.userInterfaceIdiom == .pad ? 24 : 18, 
-                                    weight: .medium,
-                                    design: .rounded))
-                        .opacity(0.9)
-                }
-                .foregroundColor(.white)
-            }
-            .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? 300 : 200,
-                   height: UIDevice.current.userInterfaceIdiom == .pad ? 300 : 200)
+        Button(action: handleCounterTap) {
+            CounterButtonContent(
+                counter: counter,
+                selectedDhikr: selectedDhikr,
+                currentTheme: currentTheme,
+                isAnimating: isAnimating
+            )
         }
-        .buttonStyle(CounterButtonStyle())
+        .buttonStyle(PlainButtonStyle())
         .accessibilityLabel("Count")
-        .accessibilityHint("Tap to increase count. Current count is \(counter) out of \(selectedDhikr.count)")
+        .accessibilityHint("Tap to increase count. Total count is \(counter). Current set: \(counter % selectedDhikr.count) out of \(selectedDhikr.count)")
     }
     
-    private func incrementCounter() {
-        withAnimation(.spring(response: 0.2, dampingFraction: 0.6)) {
-            counter += 1
+    private func handleCounterTap() {
+        counter += 1
+        UserDefaults.standard.set(counter, forKey: "counter")
+        
+        if isSoundEnabled {
+            playSound()
+        }
+        
+        triggerHapticFeedback()
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
             isAnimating = true
-            pulseEffect = true
-            
-            // Play sound on every tap if enabled
-            if isSoundEnabled { 
-                playSound() 
-            }
-            
-            if counter.isMultiple(of: 10) {
-                addParticles()
-            }
-            
-            if counter >= selectedDhikr.count {
-                triggerHapticFeedback()
-                addCelebrationParticles()
-                
-                // Show celebration
-                withAnimation(.spring(response: 0.6, dampingFraction: 0.7)) {
-                    showingCelebration = true
-                }
-                
-                // Hide celebration after 2 seconds
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                    withAnimation(.easeOut(duration: 0.3)) {
-                        showingCelebration = false
-                    }
-                }
-            }
-            
-            UserDefaults.standard.set(counter, forKey: "counter")
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            isAnimating = false
-            withAnimation(.easeOut(duration: 0.3)) {
-                pulseEffect = false
+        // Check if set is complete
+        if counter % selectedDhikr.count == 0 {
+            showCompletion = true
+        }
+        
+        // Reset animation after delay
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            withAnimation {
+                isAnimating = false
             }
         }
     }
     
-    private func addParticles() {
-        // Similar to watch app implementation
-        for _ in 0..<10 {
-            let particle = ParticleEffect()
-            particleEffects.append(particle)
-            
-            withAnimation(.easeOut(duration: 1.0)) {
-                particle.position = CGSize(
-                    width: CGFloat.random(in: -150...150),
-                    height: CGFloat.random(in: -150...150)
+    private struct CounterButtonContent: View {
+        let counter: Int
+        let selectedDhikr: Dhikr
+        let currentTheme: Theme
+        let isAnimating: Bool
+        
+        var body: some View {
+            ZStack {
+                // Neumorphic background
+                Circle()
+                    .fill(currentTheme.buttonBackground.opacity(0.1))
+                    .shadow(
+                        color: currentTheme.buttonBackground.opacity(0.2),
+                        radius: 10,
+                        x: -5,
+                        y: -5
+                    )
+                    .shadow(
+                        color: Color.black.opacity(0.2),
+                        radius: 10,
+                        x: 5,
+                        y: 5
+                    )
+                
+                // Progress rings with glow effect
+                ProgressRings(
+                    counter: counter,
+                    selectedDhikr: selectedDhikr,
+                    currentTheme: currentTheme
                 )
-                particle.opacity = 0
+                
+                // Counter display with improved typography
+                CounterDisplay(
+                    counter: counter,
+                    selectedDhikr: selectedDhikr,
+                    currentTheme: currentTheme
+                )
+                .scaleEffect(isAnimating ? 0.97 : 1.0)
+                
+                // Enhanced ripple effect
+                if isAnimating {
+                    Circle()
+                        .stroke(currentTheme.primary.opacity(0.3), lineWidth: 3)
+                        .scaleEffect(1.2)
+                        .opacity(0)
+                        .animation(.easeOut(duration: 0.6), value: isAnimating)
+                }
             }
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                particleEffects.removeAll { $0.id == particle.id }
+            .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? 300 : 200)
+        }
+    }
+    
+    private var backgroundGradient: some View {
+        Group {
+            if case .solid(let color) = currentTheme.background {
+                color.edgesIgnoringSafeArea(.all)
+            } else {
+                LinearGradient(
+                    colors: currentTheme.backgroundColors(for: colorScheme),
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                .edgesIgnoringSafeArea(.all)
             }
         }
     }
     
-    private func addCelebrationParticles() {
-        let colors: [Color] = [
-            currentTheme.primary,
-            currentTheme.buttonBackground,
-            currentTheme.textColor,
-            .white
-        ]
+    private struct ProgressRings: View {
+        @Environment(\.theme) private var theme
+        let counter: Int
+        let selectedDhikr: Dhikr
+        let currentTheme: Theme
         
-        for _ in 0..<30 {  // Increased particle count
-            let particle = ParticleEffect()
-            particle.color = colors.randomElement() ?? .white
-            particleEffects.append(particle)
-            
-            withAnimation(.easeOut(duration: 2.0)) {  // Longer duration
-                particle.position = CGSize(
-                    width: CGFloat.random(in: -250...250),
-                    height: CGFloat.random(in: -250...250)
+        var body: some View {
+            ZStack {
+                Circle()
+                    .stroke(theme.primary.opacity(0.1), lineWidth: 15)
+                
+                Circle()
+                    .trim(from: 0.0, to: progress)
+                    .stroke(theme.primary, style: StrokeStyle(lineWidth: 15, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+            }
+        }
+        
+        private var progress: CGFloat {
+            min(CGFloat(counter % selectedDhikr.count) / CGFloat(selectedDhikr.count), 1.0)
+        }
+    }
+    
+    private struct CounterDisplay: View {
+        @Environment(\.theme) private var theme
+        let counter: Int
+        let selectedDhikr: Dhikr
+        let currentTheme: Theme
+        
+        var body: some View {
+            VStack(spacing: 4) {
+                Text("\(counter)")
+                    .font(.system(size: UIDevice.current.userInterfaceIdiom == .pad ? 90 : 60, 
+                                weight: .heavy,
+                                design: .rounded))
+                    .foregroundColor(theme.textColor)
+                    .shadow(color: theme.primary.opacity(0.1), radius: 5, x: 0, y: 3)
+                
+                // Progress indicator with custom layout
+                HStack(spacing: 0) {
+                    Text("\(counter % selectedDhikr.count)")
+                        .font(.system(.title3, design: .monospaced).weight(.bold))
+                        .foregroundColor(theme.textColor)
+                    
+                    Text("/\(selectedDhikr.count)")
+                        .font(.system(.callout, design: .monospaced))
+                        .foregroundColor(theme.secondary)
+                }
+                .padding(6)
+                .background(
+                    Capsule()
+                        .fill(theme.buttonBackground.opacity(0.1))
                 )
-                particle.opacity = 0
-                particle.rotation = Double.random(in: 0...360)
+                
+                // Set counter with improved design
+                Text("Set \((counter / selectedDhikr.count) + 1)")
+                    .font(.system(.caption, design: .rounded).weight(.medium))
+                    .foregroundColor(theme.adaptiveSecondaryColor)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(
+                        Capsule()
+                            .fill(theme.primary.opacity(0.1))
+                    )
             }
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                particleEffects.removeAll { $0.id == particle.id }
-            }
+            .padding()
         }
     }
     
     private var resetButton: some View {
-        Button(action: {
-            counter = 0
-            UserDefaults.standard.set(counter, forKey: "counter")
-        }) {
+        Button(action: resetCounter) {
             Text("Reset")
-                .font(.system(size: 20, weight: .semibold, design: .rounded))
+                .font(.system(.headline, design: .rounded))
                 .foregroundColor(.white)
-                .padding(.horizontal, 35)
-                .padding(.vertical, 15)
-                .background(currentTheme.buttonBackground)
-                .cornerRadius(25)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 12)
+                .background(
+                    Capsule()
+                        .fill(currentTheme.primary)
+                )
+                .shadow(color: currentTheme.primary.opacity(0.3), radius: 5, x: 0, y: 3)
         }
-        .accessibilityLabel("Reset Counter")
-        .accessibilityHint("Tap to reset the count to zero")
-    }
-    
-    private var celebrationOverlay: some View {
-        VStack(spacing: 16) {
-            Text("ما شاء الله")
-                .font(.system(size: 48, weight: .bold))
-                .foregroundColor(currentTheme.primary)
-            
-            Text("Well done!")
-                .font(.title)
-                .foregroundColor(currentTheme.textColor)
-            
-            Text("\(selectedDhikr.count) dhikrs completed")
-                .font(.title3)
-                .foregroundColor(currentTheme.secondary)
-        }
-        .padding(30)
-        .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color(UIColor.systemBackground))
-                .shadow(color: currentTheme.buttonBackground.opacity(0.3), radius: 20)
-        )
-        .transition(.scale.combined(with: .opacity))
+        .buttonStyle(ScaleButtonStyle())
     }
     
     private func playSound() {
@@ -368,29 +347,179 @@ struct TasbihView: View {
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
     }
-}
 
-// Add custom button style for better touch feedback
-struct CounterButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-            .animation(.spring(response: 0.2, dampingFraction: 0.7), value: configuration.isPressed)
+    private func showCompletionAnimation() {
+        withAnimation(.spring(response: 0.6, dampingFraction: 0.8)) {
+            showCompletion = true
+            isAnimating = true
+        }
+        
+        let generator = UINotificationFeedbackGenerator()
+        generator.prepare()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            generator.notificationOccurred(.success)
+        }
     }
-}
 
-// Particle Effect Model (same as watch app)
-class ParticleEffect: Identifiable {
-    let id = UUID()
-    var position: CGSize = .zero
-    var opacity: Double = 0.8
-    var size: CGFloat = CGFloat.random(in: 3...8)  // Slightly larger particles
-    var color: Color = .white
-    var rotation: Double = 0
+    private func resetCounter() {
+        counter = 0
+        UserDefaults.standard.set(counter, forKey: "counter")
+        
+        // Add haptic feedback for reset
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.success)
+    }
 }
 
 struct TasbihView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+    }
+}
+
+// Update the glassMorphic modifier
+extension View {
+    func glassMorphic(cornerRadius: CGFloat = 30) -> some View {
+        self.background(
+            ZStack {
+                Color(UIColor.systemBackground)
+                    .opacity(0.7)
+                    .blur(radius: 8)
+                
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+            }
+            .cornerRadius(cornerRadius)
+        )
+    }
+}
+
+// Update StatCard to be iOS 14 compatible
+private struct StatCard: View {
+    let title: String
+    let value: String
+    
+    var body: some View {
+        VStack(spacing: 4) {
+            Text(value)
+                .font(.system(.title2, design: .rounded).weight(.bold))
+            Text(title)
+                .font(.caption.weight(.medium))
+                .foregroundColor(Color(.secondaryLabel))
+        }
+        .frame(width: 100)
+        .padding(.vertical, 12)
+        .background(
+            ZStack {
+                Color(UIColor.systemBackground)
+                    .opacity(0.7)
+                    .blur(radius: 8)
+                
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.white.opacity(0.2), lineWidth: 0.5)
+            }
+        )
+        .cornerRadius(16)
+    }
+}
+
+// New component: CompletionBadge
+private struct CompletionBadge: View {
+    let currentTheme: Theme
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(currentTheme.primary.opacity(0.1))
+                .frame(width: 80, height: 80)
+            
+            Image(systemName: "checkmark.seal.fill")
+                .font(.system(size: 40))
+                .foregroundColor(currentTheme.primary)
+                .modifier(BounceEffectModifier())
+        }
+    }
+}
+
+// Create compatibility modifier
+struct BounceEffectModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        Group {
+            if #available(iOS 17.0, *) {
+                content
+                    .symbolEffect(.bounce, options: .repeating)
+            } else {
+                content
+            }
+        }
+    }
+}
+
+// New component: CompletionStats
+private struct CompletionStats: View {
+    let counter: Int
+    let selectedDhikr: Dhikr
+    let currentTheme: Theme
+    
+    var body: some View {
+        VStack(spacing: 15) {
+            Text("ما شاء الله")
+                .font(.system(size: 24, weight: .medium, design: .rounded))
+                .foregroundColor(currentTheme.primary)
+            
+            VStack(spacing: 8) {
+                StatItem(title: "Total Count", value: "\(counter)", theme: currentTheme)
+                StatItem(title: "Completed Sets", value: "\(counter / selectedDhikr.count)", theme: currentTheme)
+                StatItem(title: "Current Set", value: "\((counter % selectedDhikr.count))/\(selectedDhikr.count)", theme: currentTheme)
+            }
+        }
+    }
+}
+
+// Enhanced StatItem component
+private struct StatItem: View {
+    let title: String
+    let value: String
+    let theme: Theme
+    
+    var body: some View {
+        HStack {
+            Text(title)
+                .font(.subheadline)
+                .foregroundColor(theme.adaptiveSecondaryColor)
+            
+            Spacer()
+            
+            Text(value)
+                .font(.system(.body, design: .monospaced).weight(.medium))
+                .foregroundColor(theme.textColor)
+        }
+        .padding(.horizontal)
+        .padding(.vertical, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(theme.primary.opacity(0.05))
+        )
+    }
+}
+
+// Add compatibility extension
+extension View {
+    @ViewBuilder
+    func ifAvailable<Content: View>(_ version: Double, _ transform: (Self) -> Content) -> some View {
+        if #available(iOS 17.0, *) {
+            transform(self)
+        } else {
+            self
+        }
+    }
+}
+
+// Add the missing ScaleButtonStyle
+struct ScaleButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.95 : 1)
+            .animation(.spring(response: 0.2, dampingFraction: 0.6), value: configuration.isPressed)
     }
 }
