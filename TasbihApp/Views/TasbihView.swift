@@ -3,15 +3,14 @@ import AVFoundation
 import UIKit
 
 struct TasbihView: View {
-    @State private var selectedDhikr = dhikrList[0]
     @State private var counter = UserDefaults.standard.integer(forKey: "counter")
     @Binding var isSoundEnabled: Bool
     @Binding var target: Int
-    @State private var showDhikrSelector = false
     @Environment(\.colorScheme) private var colorScheme
     @AppStorage("selectedThemeIndex") private var selectedThemeIndex: Int = 0
     @State private var isAnimating = false
     @State private var showCompletion = false
+    @Binding var selectedDhikr: Dhikr
     
     private var audioPlayer: AVAudioPlayer?
     
@@ -19,9 +18,10 @@ struct TasbihView: View {
         appThemes[selectedThemeIndex]
     }
     
-    init(isSoundEnabled: Binding<Bool>, target: Binding<Int>) {
+    init(isSoundEnabled: Binding<Bool>, target: Binding<Int>, selectedDhikr: Binding<Dhikr>) {
         self._isSoundEnabled = isSoundEnabled
         self._target = target
+        self._selectedDhikr = selectedDhikr
         configureAudioSession()
         loadSound()
     }
@@ -82,14 +82,6 @@ struct TasbihView: View {
                         .foregroundColor(currentTheme.headerColor)
                 }
                 #endif
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: { showDhikrSelector.toggle() }) {
-                            Image(systemName: "list.bullet")
-                                .foregroundColor(currentTheme.primary)
-                        }
-                    }
-                }
                 
                 .alert(isPresented: $showCompletion) {
                     Alert(
@@ -111,9 +103,6 @@ struct TasbihView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
-        .sheet(isPresented: $showDhikrSelector) {
-            DhikrSelectorView(dhikrList: dhikrList, selectedDhikr: $selectedDhikr)
-        }
     }
     
     private var dhikrSection: some View {

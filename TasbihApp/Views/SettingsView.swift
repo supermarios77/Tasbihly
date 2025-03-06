@@ -24,106 +24,124 @@ struct SettingsView: View {
         NavigationView {
             ZStack {
                 theme.backgroundView
-                    .edgesIgnoringSafeArea(.all)
+                    .ignoresSafeArea()
                 
-                List {
-                    Section(header: 
-                        Text("Appearance")
-                            .textCase(.uppercase)
-                            .font(.footnote.weight(.semibold))
-                            .foregroundColor(sectionHeaderColor)
-                            .padding(.top, 8)
-                    ) {
-                        ThemePicker(selectedThemeIndex: $selectedThemeIndex)
-                    }
-                    .listRowBackground(listRowBackground)
-                    
-                    Section(header:
-                        Text("Preferences")
-                            .textCase(.uppercase)
-                            .font(.footnote.weight(.semibold))
-                            .foregroundColor(sectionHeaderColor)
-                            .padding(.top, 8)
-                    ) {
-                        Toggle(isOn: $isSoundEnabled) {
-                            Label {
-                                Text("Sound Effects")
-                                    .foregroundColor(theme.adaptiveTextColor)
-                            } icon: {
-                                Image(systemName: "speaker.wave.2.fill")
-                                    .foregroundColor(theme.primary)
-                            }
+                ScrollView {
+                    LazyVStack(spacing: 20) {
+                        // Appearance Section
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Appearance")
+                                .textCase(.uppercase)
+                                .font(.footnote.weight(.semibold))
+                                .foregroundColor(sectionHeaderColor)
+                                .padding(.horizontal)
+                            
+                            ThemePicker(selectedThemeIndex: $selectedThemeIndex)
+                                .padding()
+                                .background(listRowBackground)
+                                .cornerRadius(10)
                         }
+                        .padding(.top)
                         
-                        HStack {
-                            Label {
-                                Text("Daily Target")
-                                    .foregroundColor(theme.adaptiveTextColor)
-                            } icon: {
-                                Image(systemName: "target")
-                                    .foregroundColor(theme.primary)
-                            }
+                        // Preferences Section
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Preferences")
+                                .textCase(.uppercase)
+                                .font(.footnote.weight(.semibold))
+                                .foregroundColor(sectionHeaderColor)
+                                .padding(.horizontal)
                             
-                            Spacer()
-                            
-                            Text("\(target)")
-                                .foregroundColor(theme.adaptiveSecondaryColor)
-                            
-                            Stepper("", value: $target, in: 33...1000)
-                                .labelsHidden()
-                        }
-                    }
-                    .listRowBackground(listRowBackground)
-                    
-                    Section(header:
-                        Text("Notifications")
-                            .textCase(.uppercase)
-                            .font(.footnote.weight(.semibold))
-                            .foregroundColor(sectionHeaderColor)
-                            .padding(.top, 8),
-                        footer:
-                            Group {
-                                if notificationManager.isNotificationsEnabled {
-                                    Text("You will receive a daily reminder at the selected time")
-                                        .font(.caption)
+                            VStack(spacing: 1) {
+                                Toggle(isOn: $isSoundEnabled) {
+                                    Label {
+                                        Text("Sound Effects")
+                                            .foregroundColor(theme.adaptiveTextColor)
+                                    } icon: {
+                                        Image(systemName: "speaker.wave.2.fill")
+                                            .foregroundColor(theme.primary)
+                                    }
+                                }
+                                .padding()
+                                .background(listRowBackground)
+                                
+                                HStack {
+                                    Label {
+                                        Text("Daily Target")
+                                            .foregroundColor(theme.adaptiveTextColor)
+                                    } icon: {
+                                        Image(systemName: "target")
+                                            .foregroundColor(theme.primary)
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    Text("\(target)")
                                         .foregroundColor(theme.adaptiveSecondaryColor)
+                                    
+                                    Stepper("", value: $target, in: 33...1000)
+                                        .labelsHidden()
                                 }
+                                .padding()
+                                .background(listRowBackground)
                             }
-                    ) {
-                        Toggle(isOn: $notificationManager.isNotificationsEnabled) {
-                            Label {
-                                Text("Daily Reminders")
-                                    .foregroundColor(theme.adaptiveTextColor)
-                            } icon: {
-                                Image(systemName: "bell.fill")
-                                    .foregroundColor(theme.primary)
-                            }
+                            .cornerRadius(10)
                         }
                         
-                        if notificationManager.isNotificationsEnabled {
-                            HStack {
-                                Label {
-                                    Text("Reminder Time")
-                                        .foregroundColor(theme.adaptiveTextColor)
-                                } icon: {
-                                    Image(systemName: "clock.fill")
-                                        .foregroundColor(theme.primary)
+                        // Notifications Section
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Notifications")
+                                .textCase(.uppercase)
+                                .font(.footnote.weight(.semibold))
+                                .foregroundColor(sectionHeaderColor)
+                                .padding(.horizontal)
+                            
+                            VStack(spacing: 1) {
+                                Toggle(isOn: $notificationManager.isNotificationsEnabled) {
+                                    Label {
+                                        Text("Daily Reminders")
+                                            .foregroundColor(theme.adaptiveTextColor)
+                                    } icon: {
+                                        Image(systemName: "bell.fill")
+                                            .foregroundColor(theme.primary)
+                                    }
                                 }
+                                .padding()
+                                .background(listRowBackground)
                                 
-                                Spacer()
-                                
-                                DatePicker("", 
-                                         selection: $notificationManager.reminderTime,
-                                         displayedComponents: .hourAndMinute)
-                                    .labelsHidden()
-                                    .accentColor(theme.primary)
+                                if notificationManager.isNotificationsEnabled {
+                                    HStack {
+                                        Label {
+                                            Text("Reminder Time")
+                                                .foregroundColor(theme.adaptiveTextColor)
+                                        } icon: {
+                                            Image(systemName: "clock.fill")
+                                                .foregroundColor(theme.primary)
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                        DatePicker("", 
+                                                 selection: $notificationManager.reminderTime,
+                                                 displayedComponents: .hourAndMinute)
+                                            .labelsHidden()
+                                            .accentColor(theme.primary)
+                                    }
+                                    .padding()
+                                    .background(listRowBackground)
+                                }
+                            }
+                            .cornerRadius(10)
+                            
+                            if notificationManager.isNotificationsEnabled {
+                                Text("You will receive a daily reminder at the selected time")
+                                    .font(.caption)
+                                    .foregroundColor(theme.adaptiveSecondaryColor)
+                                    .padding(.horizontal)
                             }
                         }
                     }
-                    .listRowBackground(listRowBackground)
+                    .padding(.horizontal)
                 }
-                .listStyle(InsetGroupedListStyle())
-                .background(theme.backgroundView.edgesIgnoringSafeArea(.all))
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
@@ -138,11 +156,33 @@ struct ThemePicker: View {
     @Environment(\.theme) private var theme
     
     var body: some View {
-        Picker("Theme", selection: $selectedThemeIndex) {
-            ForEach(0..<appThemes.count, id: \.self) { index in
-                Text(appThemes[index].name)
-                    .tag(index)
+        HStack {
+            Label {
+                Text("Theme")
                     .foregroundColor(theme.adaptiveTextColor)
+            } icon: {
+                Image(systemName: "paintbrush.fill")
+                    .foregroundColor(theme.primary)
+            }
+            
+            Spacer()
+            
+            Menu {
+                ForEach(0..<appThemes.count, id: \.self) { index in
+                    Button(action: {
+                        selectedThemeIndex = index
+                    }) {
+                        HStack {
+                            Text(appThemes[index].name)
+                            if index == selectedThemeIndex {
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                }
+            } label: {
+                Text(appThemes[selectedThemeIndex].name)
+                    .foregroundColor(theme.adaptiveSecondaryColor)
             }
         }
     }

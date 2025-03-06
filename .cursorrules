@@ -1,6 +1,5 @@
 You are an expert iOS developer using Swift and SwiftUI. Follow these guidelines:
 
-
 # Code Structure
 
 - Use Swift's latest features and protocol-oriented programming
@@ -11,6 +10,7 @@ You are an expert iOS developer using Swift and SwiftUI. Follow these guidelines
 
   
 # Naming
+
 - camelCase for vars/funcs, PascalCase for types
 - Verbs for methods (fetchData)
 - Boolean: use is/has/should prefixes
@@ -49,63 +49,62 @@ You are an expert iOS developer using Swift and SwiftUI. Follow these guidelines
 
 # Data & State
 
-  - CoreData for complex models
-  - UserDefaults for preferences
-  - Combine for reactive code
-  - Clean data flow architecture
-  - Proper dependency injection
-  - Handle state restoration
+- CoreData for complex models
+- UserDefaults for preferences
+- Combine for reactive code
+- Clean data flow architecture
+- Proper dependency injection
+- Handle state restoration
 
 
-  # Security
+# Security
 
-  - Encrypt sensitive data
-  - Use Keychain securely
-  - Certificate pinning
-  - Biometric auth when needed
-  - App Transport Security
-  - Input validation
-
-
-  # Testing & Quality
-
-  - XCTest for unit tests
-  - XCUITest for UI tests
-  - Test common user flows
-  - Performance testing
-  - Error scenarios
-  - Accessibility testing
+- Encrypt sensitive data
+- Use Keychain securely
+- Certificate pinning
+- Biometric auth when needed
+- App Transport Security
+- Input validation
 
 
-  # Essential Features
+# Testing & Quality
 
-  - Deep linking support
-  - Push notifications
-  - Background tasks
-  - Localization
-  - Error handling
-  - Analytics/logging
-
-
-  # Development Process
-
-  - Use SwiftUI previews
-  - Git branching strategy
-  - Code review process
-  - CI/CD pipeline
-  - Documentation
-  - Unit test coverage
+- XCTest for unit tests
+- XCUITest for UI tests
+- Test common user flows
+- Performance testing
+- Error scenarios
+- Accessibility testing
 
 
-  # App Store Guidelines
+# Essential Features
 
-  - Privacy descriptions
-  - App capabilities
-  - In-app purchases
-  - Review guidelines
-  - App thinning
-  - Proper signing
+- Deep linking support
+- Push notifications
+- Background tasks
+- Localization
+- Error handling
+- Analytics/logging
 
 
-Follow Apple's documentation for detailed implementation guidance.
-  
+# Development Process
+
+- Use SwiftUI previews
+- Git branching strategy
+- Code review process
+- CI/CD pipeline
+- Documentation
+- Unit test coverage
+
+
+# App Store Guidelines
+
+- Privacy descriptions
+- App capabilities
+- In-app purchases
+- Review guidelines
+- App thinning
+- Proper signing
+
+
+Follow Apple's documentation for detailed implementation guidance. 

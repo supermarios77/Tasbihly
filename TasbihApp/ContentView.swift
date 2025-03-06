@@ -5,6 +5,8 @@ struct ContentView: View {
     @AppStorage("target") private var target = 33
     @AppStorage("selectedThemeIndex") private var selectedThemeIndex: Int = 0
     @State private var showSettings = false
+    @State private var selectedDhikr = dhikrList[0]
+    @State private var selectedTab = 0
     
     private var currentTheme: Theme {
         let safeIndex = min(max(selectedThemeIndex, 0), appThemes.count - 1)
@@ -39,16 +41,24 @@ struct ContentView: View {
             currentTheme.backgroundView
                 .ignoresSafeArea()
             
-            TabView {
-                TasbihView(isSoundEnabled: $isSoundEnabled, target: $target)
+            TabView(selection: $selectedTab) {
+                TasbihView(isSoundEnabled: $isSoundEnabled, target: $target, selectedDhikr: $selectedDhikr)
                     .tabItem {
-                        Label("Tasbih", systemImage: "circle.grid.3x3.fill")
+                        Label("Counter", systemImage: "circle.grid.3x3.fill")
                     }
+                    .tag(0)
+                
+                DhikrSelectorView(selectedDhikr: $selectedDhikr, selectedTab: $selectedTab)
+                    .tabItem {
+                        Label("Library", systemImage: "books.vertical.fill")
+                    }
+                    .tag(1)
                 
                 SettingsView(isSoundEnabled: $isSoundEnabled, target: $target)
                     .tabItem {
                         Label("Settings", systemImage: "gearshape.fill")
                     }
+                    .tag(2)
             }
             .accentColor(currentTheme.primary)
             .onAppear {
