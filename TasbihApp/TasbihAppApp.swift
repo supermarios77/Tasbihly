@@ -23,7 +23,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             scheduleReminderNotification()
         }
         
-        return true
+        return true 
     }
     
     func requestNotificationPermissions() {

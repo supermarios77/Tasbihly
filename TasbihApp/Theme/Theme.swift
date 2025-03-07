@@ -9,7 +9,7 @@ struct Theme {
     let name: String
     let background: ThemeBackground
     
-    // Add computed property for text colors
+    // Enhanced text colors
     var adaptiveTextColor: Color {
         switch background {
         case .solid(let color):
@@ -26,6 +26,58 @@ struct Theme {
         adaptiveTextColor.opacity(0.7)
     }
     
+    // New computed properties for enhanced UI
+    var surfaceColor: Color {
+        switch background {
+        case .solid(let color):
+            return isColorLight(color) ? 
+                Color.white.opacity(0.7) : 
+                Color.black.opacity(0.3)
+        case .gradient, .pattern:
+            return Color.black.opacity(0.2)
+        }
+    }
+    
+    var shadowColor: Color {
+        switch background {
+        case .solid(let color):
+            return isColorLight(color) ? 
+                Color.black.opacity(0.1) : 
+                Color.white.opacity(0.1)
+        case .gradient, .pattern:
+            return Color.black.opacity(0.15)
+        }
+    }
+    
+    var accentGradient: LinearGradient {
+        LinearGradient(
+            colors: [primary, secondary],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+    
+    var isDark: Bool {
+        !isColorLight(background.color)
+    }
+    
+    // Enhanced color helpers
+    var primaryVariant: Color {
+        primary.opacity(0.8)
+    }
+    
+    var secondaryVariant: Color {
+        secondary.opacity(0.8)
+    }
+    
+    var onSurface: Color {
+        adaptiveTextColor
+    }
+    
+    var onSurfaceVariant: Color {
+        adaptiveTextColor.opacity(0.6)
+    }
+    
     // Helper function to determine if a color is light
     private func isColorLight(_ color: Color) -> Bool {
         var red: CGFloat = 0
@@ -38,7 +90,7 @@ struct Theme {
         return brightness > 0.6
     }
     
-    // Add computed property for dark mode background
+    // Enhanced background colors for different states
     func backgroundColors(for colorScheme: ColorScheme) -> [Color] {
         switch background {
         case .solid(let color):
@@ -49,12 +101,65 @@ struct Theme {
             return [Color(name)]
         }
     }
+    
+    // New helper methods for UI states
+    func opacity(for state: ThemeState) -> Double {
+        switch state {
+        case .normal:
+            return 1.0
+        case .pressed:
+            return 0.8
+        case .disabled:
+            return 0.4
+        case .highlighted:
+            return 0.9
+        }
+    }
+    
+    func elevation(for level: ThemeElevation) -> Double {
+        switch level {
+        case .none:
+            return 0
+        case .low:
+            return 2
+        case .medium:
+            return 4
+        case .high:
+            return 8
+        }
+    }
+}
+
+// New enums for theme states
+enum ThemeState {
+    case normal
+    case pressed
+    case disabled
+    case highlighted
+}
+
+enum ThemeElevation {
+    case none
+    case low
+    case medium
+    case high
 }
 
 enum ThemeBackground {
     case solid(Color)
     case gradient([Color])
     case pattern(String)
+    
+    var color: Color {
+        switch self {
+        case .solid(let color):
+            return color
+        case .gradient(let colors):
+            return colors.first ?? .clear
+        case .pattern:
+            return .clear
+        }
+    }
     
     var isLight: Bool {
         switch self {
@@ -69,92 +174,92 @@ enum ThemeBackground {
 }
 
 let appThemes: [Theme] = [
-    // Pure White
+    // OLED Dark (Default)
     Theme(
-        primary: Color(hex: "2ECC71"),
-        secondary: Color(hex: "27AE60"),
-        headerColor: Color(hex: "1D8348"),
-        buttonBackground: Color(hex: "2ECC71"),
-        textColor: Color(hex: "1A1A1A"),
-        name: "Pure White",
-        background: .solid(Color(hex: "FFFFFF"))
+        primary: Color(hex: "00BCD4"),      // Vibrant cyan
+        secondary: Color(hex: "80DEEA"),     // Light cyan
+        headerColor: Color(hex: "E0F7FA"),   // Very light cyan for header text
+        buttonBackground: Color(hex: "00ACC1"), // Medium cyan
+        textColor: Color(hex: "FFFFFF"),     // Pure white
+        name: "OLED Dark",
+        background: .solid(Color(hex: "000000")) // True black for OLED
     ),
     
-    // Deep Black
+    // Midnight Blue
     Theme(
-        primary: Color(hex: "00BCD4"),
-        secondary: Color(hex: "0097A7"),
-        headerColor: Color(hex: "00838F"),
-        buttonBackground: Color(hex: "00BCD4"),
-        textColor: Color(hex: "FFFFFF"),
-        name: "Deep Black",
-        background: .solid(Color(hex: "121212")) // Darker background for better contrast
+        primary: Color(hex: "4A90E2"),      // Ocean blue
+        secondary: Color(hex: "5B9EED"),     // Light ocean blue
+        headerColor: Color(hex: "BBE1FF"),   // Light blue for header text
+        buttonBackground: Color(hex: "4A90E2"), // Ocean blue
+        textColor: Color(hex: "FFFFFF"),     // White
+        name: "Midnight Blue",
+        background: .solid(Color(hex: "1A1B2E")) // Dark navy
     ),
     
-    // Classic Paper
+    // Nature Dark
     Theme(
-        primary: Color(hex: "8B4513"),  // Saddle brown
-        secondary: Color(hex: "654321"),  // Dark brown
-        headerColor: Color(hex: "4A2C1A"),
-        buttonBackground: Color(hex: "8B4513"),
-        textColor: Color(hex: "3E2723"),  // Dark brown
-        name: "Classic Paper",
-        background: .solid(Color(hex: "FDF5E6"))  // Old paper
+        primary: Color(hex: "4CAF50"),      // Forest green
+        secondary: Color(hex: "81C784"),     // Light green
+        headerColor: Color(hex: "C8E6C9"),   // Light green for header text
+        buttonBackground: Color(hex: "43A047"), // Medium green
+        textColor: Color(hex: "FFFFFF"),     // White
+        name: "Nature Dark",
+        background: .solid(Color(hex: "1C1C1C")) // Soft black
     ),
     
-    // Midnight Oil
+    // Sepia Light
     Theme(
-        primary: Color(hex: "FFD700"),  // Gold
-        secondary: Color(hex: "FFB300"),  // Orange
-        headerColor: Color(hex: "CC9200"),
-        buttonBackground: Color(hex: "FFD700"),
-        textColor: Color(hex: "FFFFFF"),  // White
-        name: "Midnight Oil",
-        background: .solid(Color(hex: "1A1A1A"))  // Soft black
+        primary: Color(hex: "8B4513"),      // Sepia brown
+        secondary: Color(hex: "A0522D"),     // Light sepia
+        headerColor: Color(hex: "3E2723"),   // Dark brown for header text
+        buttonBackground: Color(hex: "8B4513"), // Sepia brown
+        textColor: Color(hex: "3E2723"),     // Dark brown text
+        name: "Sepia Light",
+        background: .solid(Color(hex: "FDF5E6")) // Old paper
     ),
     
-    // Modern Contrast
+    // Pure Light
     Theme(
-        primary: Color(hex: "E91E63"),  // Pink
-        secondary: Color(hex: "C2185B"),  // Dark pink
-        headerColor: Color(hex: "9A1451"),
-        buttonBackground: Color(hex: "E91E63"),
-        textColor: Color(hex: "212121"),  // Dark gray
-        name: "Modern Contrast",
-        background: .solid(Color(hex: "F5F5F5"))  // Light gray
+        primary: Color(hex: "2196F3"),      // Sky blue
+        secondary: Color(hex: "64B5F6"),     // Light blue
+        headerColor: Color(hex: "0D47A1"),   // Deep blue for header text
+        buttonBackground: Color(hex: "2196F3"), // Sky blue
+        textColor: Color(hex: "212121"),     // Near black
+        name: "Pure Light",
+        background: .solid(Color(hex: "FFFFFF")) // Pure white
     ),
     
-    // Professional Dark
+    // Royal Dark
     Theme(
-        primary: Color(hex: "4CAF50"),  // Green
-        secondary: Color(hex: "388E3C"),  // Dark green
-        headerColor: Color(hex: "2E7D32"),
-        buttonBackground: Color(hex: "4CAF50"),
-        textColor: Color(hex: "FFFFFF"),  // White
-        name: "Professional Dark",
-        background: .solid(Color(hex: "121212"))  // Rich black
+        primary: Color(hex: "9C27B0"),      // Purple
+        secondary: Color(hex: "BA68C8"),     // Light purple
+        headerColor: Color(hex: "E1BEE7"),   // Light purple for header text
+        buttonBackground: Color(hex: "9C27B0"), // Purple
+        textColor: Color(hex: "FFFFFF"),     // White
+        name: "Royal Dark",
+        background: .solid(Color(hex: "121212")) // Material dark
     ),
     
-    // Clean Light
+    // Golden Dark
     Theme(
-        primary: Color(hex: "2196F3"),  // Blue
-        secondary: Color(hex: "1976D2"),  // Dark blue
-        headerColor: Color(hex: "1565C0"),
-        buttonBackground: Color(hex: "2196F3"),
-        textColor: Color(hex: "212121"),  // Dark gray
-        name: "Clean Light",
-        background: .solid(Color(hex: "FFFFFF"))  // Pure white
+        primary: Color(hex: "FFD700"),      // Gold
+        secondary: Color(hex: "FFC107"),     // Amber
+        headerColor: Color(hex: "FFE57F"),   // Light gold for header text
+        buttonBackground: Color(hex: "FFD700"), // Gold
+        textColor: Color(hex: "FFFFFF"),     // White
+        name: "Golden Dark",
+        background: .solid(Color(hex: "1A1A1A")) // Soft black
     ),
     
-    // High Contrast
+    // High Contrast Light
     Theme(
-        primary: Color(hex: "FF5722"),  // Orange
-        secondary: Color(hex: "E64A19"),  // Dark orange
-        headerColor: Color(hex: "BF360C"),
-        buttonBackground: Color(hex: "FF5722"),
-        textColor: Color(hex: "000000"),  // Pure black
+        primary: Color(hex: "000000"),      // Pure black
+        secondary: Color(hex: "212121"),     // Dark gray
+        headerColor: Color(hex: "000000"),   // Pure black for header text
+        buttonBackground: Color(hex: "000000"), // Pure black
+        textColor: Color(hex: "000000"),     // Pure black
         name: "High Contrast",
-        background: .solid(Color(hex: "FFFFFF"))  // Pure white
+        background: .solid(Color(hex: "FFFFFF")) // Pure white
     )
 ]
 
@@ -232,5 +337,113 @@ extension EnvironmentValues {
     var theme: Theme {
         get { self[ThemeEnvironmentKey.self] }
         set { self[ThemeEnvironmentKey.self] = newValue }
+    }
+}
+
+// UI Extensions for Theme
+extension View {
+    func themedSurface(_ theme: Theme, elevation: ThemeElevation = .none) -> some View {
+        self.background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(theme.surfaceColor)
+                .shadow(
+                    color: theme.shadowColor,
+                    radius: theme.elevation(for: elevation),
+                    x: 0,
+                    y: theme.elevation(for: elevation) / 2
+                )
+        )
+    }
+    
+    func themedButton(_ theme: Theme) -> some View {
+        self.buttonStyle(ThemedButtonStyle(theme: theme))
+    }
+    
+    func themedText(_ theme: Theme, isSecondary: Bool = false) -> some View {
+        self.foregroundColor(isSecondary ? theme.adaptiveSecondaryColor : theme.adaptiveTextColor)
+    }
+    
+    func themedGlassmorphic(_ theme: Theme) -> some View {
+        self.background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(theme.surfaceColor)
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(theme.isDark ? Color.white.opacity(0.1) : Color.black.opacity(0.1), lineWidth: 0.5)
+                )
+                .blur(radius: 3)
+        )
+    }
+}
+
+// Custom button style
+struct ThemedButtonStyle: ButtonStyle {
+    let theme: Theme
+    
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(theme.accentGradient)
+                    .opacity(configuration.isPressed ? theme.opacity(for: .pressed) : theme.opacity(for: .normal))
+            )
+            .foregroundColor(.white)
+            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
+    }
+}
+
+// Theme animation modifier
+struct ThemeTransition: ViewModifier {
+    let theme: Theme
+    
+    func body(content: Content) -> some View {
+        content
+            .animation(.easeInOut(duration: 0.3), value: theme.name)
+    }
+}
+
+extension View {
+    func withThemeTransition(_ theme: Theme) -> some View {
+        self.modifier(ThemeTransition(theme: theme))
+    }
+}
+
+// Theme color scheme detection
+extension Theme {
+    var preferredColorScheme: ColorScheme? {
+        isDark ? .dark : .light
+    }
+    
+    func adaptiveColor(_ light: Color, _ dark: Color) -> Color {
+        isDark ? dark : light
+    }
+}
+
+// Theme-aware modifiers
+extension View {
+    func themedCard(_ theme: Theme) -> some View {
+        self
+            .padding()
+            .background(theme.surfaceColor)
+            .cornerRadius(16)
+            .shadow(
+                color: theme.shadowColor,
+                radius: theme.elevation(for: .low),
+                x: 0,
+                y: 2
+            )
+    }
+    
+    func themedOverlay(_ theme: Theme) -> some View {
+        self.overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(
+                    theme.isDark ? Color.white.opacity(0.1) : Color.black.opacity(0.1),
+                    lineWidth: 0.5
+                )
+        )
     }
 } 
