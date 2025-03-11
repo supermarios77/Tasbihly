@@ -15,9 +15,7 @@ struct SettingsView: View {
     }
     
     private var sectionHeaderColor: Color {
-        theme.background.isLight ?
-            theme.primary :
-            theme.primary.opacity(0.8)
+        theme.headerColor
     }
     
     var body: some View {
@@ -145,6 +143,13 @@ struct SettingsView: View {
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Settings")
+                        .font(.headline)
+                        .foregroundColor(theme.headerColor)
+                }
+            }
             .accentColor(theme.primary)
         }
         .navigationViewStyle(StackNavigationViewStyle())
@@ -193,3 +198,4 @@ struct SettingsView_Previews: PreviewProvider {
         SettingsView(isSoundEnabled: .constant(true), target: .constant(100))
     }
 }
+

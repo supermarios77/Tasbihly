@@ -61,32 +61,26 @@ struct ContentView: View {
                     .tag(2)
             }
             .accentColor(currentTheme.primary)
-            .onAppear {
-                // Update navigation bar appearance to be transparent
-                let appearance = UINavigationBarAppearance()
-                appearance.configureWithTransparentBackground()
-                appearance.backgroundColor = .clear
-                appearance.titleTextAttributes = [.foregroundColor: UIColor(currentTheme.textColor)]
-                appearance.largeTitleTextAttributes = [.foregroundColor: UIColor(currentTheme.textColor)]
-                UINavigationBar.appearance().standardAppearance = appearance
-                UINavigationBar.appearance().scrollEdgeAppearance = appearance
-                UINavigationBar.appearance().compactAppearance = appearance
-                UINavigationBar.appearance().tintColor = UIColor(currentTheme.primary)
-                
-                // Update tab bar appearance
-                let tabAppearance = UITabBarAppearance()
-                tabAppearance.configureWithTransparentBackground()
-                tabAppearance.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.5)
-                UITabBar.appearance().standardAppearance = tabAppearance
-                UITabBar.appearance().tintColor = UIColor(currentTheme.primary)
-                
-                // Other appearance updates
-                UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(currentTheme.primary)
-                UISwitch.appearance().onTintColor = UIColor(currentTheme.primary)
+            .onAppear(perform: updateAppearance)
+            .onChange(of: selectedThemeIndex) { _ in
+                updateAppearance()
             }
         }
         .environment(\.theme, currentTheme)
         .accentColor(currentTheme.primary)
+    }
+    
+    private func updateAppearance() {
+        // Update tab bar appearance
+        let tabAppearance = UITabBarAppearance()
+        tabAppearance.configureWithTransparentBackground()
+        tabAppearance.backgroundColor = UIColor.systemBackground.withAlphaComponent(0.5)
+        UITabBar.appearance().standardAppearance = tabAppearance
+        UITabBar.appearance().tintColor = UIColor(currentTheme.primary)
+        
+        // Other appearance updates
+        UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(currentTheme.primary)
+        UISwitch.appearance().onTintColor = UIColor(currentTheme.primary)
     }
 }
 

@@ -13,6 +13,7 @@ struct DhikrSelectorView: View {
     @State private var isLoading = false
     @State private var showFavoriteToast = false
     @State private var lastFavoriteAction = ""
+    @State private var selectedThemeIndex = 0
     
     private var filteredDhikrList: [Dhikr] {
         let baseList = showFavorites ? 
@@ -172,6 +173,13 @@ struct DhikrSelectorView: View {
             }
             .navigationTitle(showFavorites ? "Favorites" : "Dhikr Library")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text(showFavorites ? "Favorites" : "Dhikr Library")
+                        .font(.headline)
+                        .foregroundColor(theme.headerColor)
+                }
+            }
             .onChange(of: searchText) { newValue in
                 if !newValue.isEmpty {
                     // Haptic feedback when search starts

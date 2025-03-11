@@ -82,6 +82,17 @@ struct TasbihView: View {
                         .foregroundColor(currentTheme.headerColor)
                 }
                 #endif
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("Tasbihly")
+                            .font(.headline)
+                            .foregroundColor(currentTheme.headerColor)
+                    }
+                }
+                .onChange(of: selectedThemeIndex) { _ in
+                    updateNavigationBarAppearance()
+                }
+                .onAppear(perform: updateNavigationBarAppearance)
                 
                 .alert(isPresented: $showCompletion) {
                     Alert(
@@ -357,6 +368,18 @@ struct TasbihView: View {
         // Add haptic feedback for reset
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)
+    }
+
+    private func updateNavigationBarAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = .clear
+        appearance.titleTextAttributes = [.foregroundColor: UIColor(currentTheme.headerColor)]
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor(currentTheme.headerColor)]
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        UINavigationBar.appearance().compactAppearance = appearance
+        UINavigationBar.appearance().tintColor = UIColor(currentTheme.primary)
     }
 }
 
