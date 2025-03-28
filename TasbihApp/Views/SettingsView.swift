@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct SettingsView: View {
     @Environment(\.theme) private var theme
@@ -50,35 +51,11 @@ struct SettingsView: View {
                                 .padding(.horizontal)
                             
                             VStack(spacing: 1) {
-                                Toggle(isOn: $isSoundEnabled) {
-                                    Label {
-                                        Text("Sound Effects")
-                                            .foregroundColor(theme.adaptiveTextColor)
-                                    } icon: {
-                                        Image(systemName: "speaker.wave.2.fill")
-                                            .foregroundColor(theme.primary)
-                                    }
-                                }
+                                soundToggle
                                 .padding()
                                 .background(listRowBackground)
                                 
-                                HStack {
-                                    Label {
-                                        Text("Daily Target")
-                                            .foregroundColor(theme.adaptiveTextColor)
-                                    } icon: {
-                                        Image(systemName: "target")
-                                            .foregroundColor(theme.primary)
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    Text("\(target)")
-                                        .foregroundColor(theme.adaptiveSecondaryColor)
-                                    
-                                    Stepper("", value: $target, in: 33...1000)
-                                        .labelsHidden()
-                                }
+                                targetStepper()
                                 .padding()
                                 .background(listRowBackground)
                             }
@@ -103,6 +80,15 @@ struct SettingsView: View {
                                             .foregroundColor(theme.primary)
                                     }
                                 }
+                                .onChange(of: notificationManager.isNotificationsEnabled) { newValue in
+                                    HapticManager.shared.selectionChanged()
+                                    if newValue {
+                                        // Additional success feedback when enabling notifications
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                            HapticManager.shared.success()
+                                        }
+                                    }
+                                }
                                 .padding()
                                 .background(listRowBackground)
                                 
@@ -123,6 +109,9 @@ struct SettingsView: View {
                                                  displayedComponents: .hourAndMinute)
                                             .labelsHidden()
                                             .accentColor(theme.primary)
+                                            .onChange(of: notificationManager.reminderTime) { _ in
+                                                HapticManager.shared.selectionChanged()
+                                            }
                                     }
                                     .padding()
                                     .background(listRowBackground)
@@ -154,6 +143,59 @@ struct SettingsView: View {
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
+    
+    // Toggle with haptic feedback for sound
+    private var soundToggle: some View {
+        Toggle(isOn: $isSoundEnabled) {
+            HStack {
+                Image(systemName: "speaker.wave.2.fill")
+                    .foregroundColor(theme.primary)
+                    .font(.system(size: 22))
+                    .frame(width: 24, height: 24)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Sound Effects")
+                        .foregroundColor(theme.textColor)
+                    
+                    Text("Play sound on count")
+                        .font(.caption)
+                        .foregroundColor(theme.secondary)
+                }
+            }
+        }
+        .toggleStyle(SwitchToggleStyle(tint: theme.primary))
+        .onChange(of: isSoundEnabled) { _ in
+            HapticManager.shared.selectionChanged()
+        }
+    }
+    
+    // Target stepper with haptic feedback
+    private func targetStepper() -> some View {
+        HStack {
+            HStack {
+                Image(systemName: "target")
+                    .foregroundColor(theme.primary)
+                    .font(.system(size: 22))
+                    .frame(width: 24, height: 24)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Target")
+                        .foregroundColor(theme.textColor)
+                    
+                    Text("Default count target")
+                        .font(.caption)
+                        .foregroundColor(theme.secondary)
+                }
+            }
+            
+            Spacer()
+            
+            Stepper("\(target)", value: $target, in: 11...999, step: 11)
+                .onChange(of: target) { _ in
+                    HapticManager.shared.selectionChanged()
+                }
+        }
+    }
 }
 
 struct ThemePicker: View {
@@ -176,6 +218,7 @@ struct ThemePicker: View {
                 ForEach(0..<appThemes.count, id: \.self) { index in
                     Button(action: {
                         selectedThemeIndex = index
+                        HapticManager.shared.mediumImpact()
                     }) {
                         HStack {
                             Text(appThemes[index].name)

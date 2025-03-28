@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct DhikrSelectorView: View {
     @Environment(\.theme) private var theme
@@ -50,7 +51,7 @@ struct DhikrSelectorView: View {
                                                     isLoading = true
                                                 }
                                                 // Haptic feedback
-                                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                                HapticManager.shared.selectionChanged()
                                                 // Simulate loading for smooth transition
                                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                                                     withAnimation { isLoading = false }
@@ -98,7 +99,7 @@ struct DhikrSelectorView: View {
                                 isLoading = true
                             }
                             // Haptic feedback
-                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                            HapticManager.shared.mediumImpact()
                             // Simulate loading for smooth transition
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                 withAnimation { isLoading = false }
@@ -183,7 +184,7 @@ struct DhikrSelectorView: View {
             .onChange(of: searchText) { newValue in
                 if !newValue.isEmpty {
                     // Haptic feedback when search starts
-                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    HapticManager.shared.lightImpact()
                 }
                 // Show loading state briefly for smooth transition
                 withAnimation { isLoading = true }
@@ -218,9 +219,8 @@ struct DhikrSelectorView: View {
         selectedDhikrId = dhikr.id
         isAnimating = true
         
-        // Haptic feedback
-        let generator = UINotificationFeedbackGenerator()
-        generator.prepare()
+        // Use our HapticManager for selection feedback
+        HapticManager.shared.selectionChanged()
         
         withAnimation(.spring(response: 0.3)) {
             selectedDhikr = dhikr
@@ -229,7 +229,7 @@ struct DhikrSelectorView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
                 withAnimation {
                     selectedTab = 0 // Switch to Tasbih tab
-                    generator.notificationOccurred(.success)
+                    HapticManager.shared.success()
                 }
             }
             
@@ -453,7 +453,7 @@ struct DhikrCard: View {
                 
                 Button(action: {
                     onFavorite()
-                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    HapticManager.shared.lightImpact()
                 }) {
                     Image(systemName: isFavorite ? "heart.fill" : "heart")
                         .font(.system(size: 14))
@@ -488,7 +488,7 @@ struct DhikrCard: View {
                         if abs(dragOffset.width) > 50 {
                             // Trigger favorite action if swiped far enough
                             onFavorite()
-                            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                            HapticManager.shared.lightImpact()
                         }
                         dragOffset = .zero
                     }
@@ -497,7 +497,7 @@ struct DhikrCard: View {
         .onTapGesture(count: 2) {
             withAnimation(.spring()) {
                 showDetails.toggle()
-                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                HapticManager.shared.lightImpact()
             }
         }
         .animation(.spring(response: 0.3), value: isAnimating)
