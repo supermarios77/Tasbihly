@@ -1,0 +1,31 @@
+{
+  "identifier" : "A1B2C3D4E5",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "com.tasbihly.premium",
+      "localizations" : [
+        {
+          "description" : "Unlock the ability to create and save your own custom dhikrs",
+          "displayName" : "Custom Dhikrs",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.tasbihly.premium",
+      "referenceName" : "Custom Dhikrs",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "com.tasbihly",
+    "_developerTeamID" : "ARWAMX5JP6",
+    "_lastSynchronizedDate" : 0
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 2,
+    "minor" : 0
+  }
+} 

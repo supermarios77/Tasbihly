@@ -8,11 +8,15 @@ struct SettingsView: View {
     @Binding var target: Int
     @AppStorage("selectedThemeIndex") private var selectedThemeIndex = 0
     @StateObject private var notificationManager = NotificationManager()
+    @State private var showingErrorAlert = false
+    @State private var errorMessage = ""
     
     private var listRowBackground: some View {
-        theme.background.isLight ? 
-            Color.black.opacity(0.05) :
-            Color.white.opacity(0.07)
+        RoundedRectangle(cornerRadius: 12)
+            .fill(theme.background.isLight ? 
+                Color.white.opacity(0.7) :
+                Color.black.opacity(0.3))
+            .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
     }
     
     private var sectionHeaderColor: Color {
@@ -26,9 +30,9 @@ struct SettingsView: View {
                     .ignoresSafeArea()
                 
                 ScrollView {
-                    LazyVStack(spacing: 20) {
+                    LazyVStack(spacing: 24) {
                         // Appearance Section
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 12) {
                             Text("Appearance")
                                 .textCase(.uppercase)
                                 .font(.footnote.weight(.semibold))
@@ -38,39 +42,36 @@ struct SettingsView: View {
                             ThemePicker(selectedThemeIndex: $selectedThemeIndex)
                                 .padding()
                                 .background(listRowBackground)
-                                .cornerRadius(10)
                         }
-                        .padding(.top)
                         
                         // Preferences Section
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 12) {
                             Text("Preferences")
                                 .textCase(.uppercase)
                                 .font(.footnote.weight(.semibold))
                                 .foregroundColor(sectionHeaderColor)
                                 .padding(.horizontal)
                             
-                            VStack(spacing: 1) {
+                            VStack(spacing: 12) {
                                 soundToggle
-                                .padding()
-                                .background(listRowBackground)
+                                    .padding()
+                                    .background(listRowBackground)
                                 
                                 targetStepper()
-                                .padding()
-                                .background(listRowBackground)
+                                    .padding()
+                                    .background(listRowBackground)
                             }
-                            .cornerRadius(10)
                         }
                         
                         // Notifications Section
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 12) {
                             Text("Notifications")
                                 .textCase(.uppercase)
                                 .font(.footnote.weight(.semibold))
                                 .foregroundColor(sectionHeaderColor)
                                 .padding(.horizontal)
                             
-                            VStack(spacing: 1) {
+                            VStack(spacing: 12) {
                                 Toggle(isOn: $notificationManager.isNotificationsEnabled) {
                                     Label {
                                         Text("Daily Reminders")
@@ -80,10 +81,10 @@ struct SettingsView: View {
                                             .foregroundColor(theme.primary)
                                     }
                                 }
+                                .toggleStyle(SwitchToggleStyle(tint: theme.primary))
                                 .onChange(of: notificationManager.isNotificationsEnabled) { newValue in
                                     HapticManager.shared.selectionChanged()
                                     if newValue {
-                                        // Additional success feedback when enabling notifications
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                             HapticManager.shared.success()
                                         }
@@ -109,6 +110,7 @@ struct SettingsView: View {
                                                  displayedComponents: .hourAndMinute)
                                             .labelsHidden()
                                             .accentColor(theme.primary)
+                                            .colorScheme(colorScheme)
                                             .onChange(of: notificationManager.reminderTime) { _ in
                                                 HapticManager.shared.selectionChanged()
                                             }
@@ -117,7 +119,6 @@ struct SettingsView: View {
                                     .background(listRowBackground)
                                 }
                             }
-                            .cornerRadius(10)
                             
                             if notificationManager.isNotificationsEnabled {
                                 Text("You will receive a daily reminder at the selected time")
@@ -126,8 +127,106 @@ struct SettingsView: View {
                                     .padding(.horizontal)
                             }
                         }
+                        
+                        // Premium Section
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Premium Features")
+                                .textCase(.uppercase)
+                                .font(.footnote.weight(.semibold))
+                                .foregroundColor(sectionHeaderColor)
+                                .padding(.horizontal)
+                            
+                            if !CustomDhikrManager.shared.isPremiumUnlocked {
+                                VStack(spacing: 20) {
+                                    HStack {
+                                        Image(systemName: "star.circle.fill")
+                                            .font(.system(size: 28))
+                                            .foregroundColor(theme.primary)
+                                        Text("Custom Dhikrs")
+                                            .font(.title3.weight(.semibold))
+                                            .foregroundColor(theme.textColor)
+                                    }
+                                    
+                                    Text("Create and save your own custom dhikrs with personalized phrases, translations, and counts")
+                                        .font(.subheadline)
+                                        .foregroundColor(theme.textColor.opacity(0.7))
+                                        .multilineTextAlignment(.center)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                    
+                                    Button(action: {
+                                        CustomDhikrManager.shared.purchasePremium { result in
+                                            switch result {
+                                            case .success:
+                                                break
+                                            case .failure(let error):
+                                                if let storeError = error as? StoreError, storeError == .userCancelled {
+                                                    return
+                                                }
+                                                errorMessage = "Failed to complete purchase. Please try again."
+                                                showingErrorAlert = true
+                                            }
+                                        }
+                                    }) {
+                                        HStack {
+                                            Image(systemName: "lock.fill")
+                                            Text("Unlock for $4.99")
+                                        }
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .background(theme.primary)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(12)
+                                        .shadow(color: theme.primary.opacity(0.3), radius: 8, x: 0, y: 4)
+                                    }
+                                    
+                                    Button(action: {
+                                        CustomDhikrManager.shared.restorePurchases { result in
+                                            switch result {
+                                            case .success:
+                                                break
+                                            case .failure:
+                                                errorMessage = "Failed to restore purchases. Please try again."
+                                                showingErrorAlert = true
+                                            }
+                                        }
+                                    }) {
+                                        Text("Restore Purchases")
+                                            .font(.subheadline)
+                                            .foregroundColor(theme.primary)
+                                    }
+                                }
+                                .padding()
+                                .background(listRowBackground)
+                            } else {
+                                HStack {
+                                    HStack {
+                                        Image(systemName: "star.circle.fill")
+                                            .foregroundColor(theme.primary)
+                                            .font(.system(size: 22))
+                                            .frame(width: 24, height: 24)
+                                        
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text("Custom Dhikrs")
+                                                .foregroundColor(theme.textColor)
+                                            
+                                            Text("Premium features unlocked")
+                                                .font(.caption)
+                                                .foregroundColor(theme.secondary)
+                                        }
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundColor(.green)
+                                }
+                                .padding()
+                                .background(listRowBackground)
+                            }
+                        }
                     }
                     .padding(.horizontal)
+                    .padding(.top)
                 }
             }
             .navigationTitle("Settings")
@@ -140,6 +239,13 @@ struct SettingsView: View {
                 }
             }
             .accentColor(theme.primary)
+            .alert(isPresented: $showingErrorAlert) {
+                Alert(
+                    title: Text("Error"),
+                    message: Text(errorMessage),
+                    dismissButton: .default(Text("OK"))
+                )
+            }
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
@@ -191,6 +297,9 @@ struct SettingsView: View {
             Spacer()
             
             Stepper("\(target)", value: $target, in: 11...999, step: 11)
+                .accentColor(theme.primary)
+                .colorScheme(colorScheme)
+                .foregroundColor(theme.adaptiveTextColor)
                 .onChange(of: target) { _ in
                     HapticManager.shared.selectionChanged()
                 }
