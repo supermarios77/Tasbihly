@@ -344,17 +344,8 @@ struct TasbihView: View {
     }
 
     private func triggerHapticFeedback() {
-        // Determine the type of haptic feedback based on the counter
-        if counter % selectedDhikr.count == 0 {
-            // Full set completed
-            HapticManager.shared.setCompletion()
-        } else if counter % 10 == 0 {
-            // Every 10 counts gets a milestone feedback
-            HapticManager.shared.milestoneTap()
-        } else {
-            // Regular count gets a subtle feedback
-            HapticManager.shared.counterTap()
-        }
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
     }
 
     private func showCompletionAnimation() {
@@ -363,16 +354,20 @@ struct TasbihView: View {
             isAnimating = true
         }
         
-        // Use our HapticManager for success feedback
-        HapticManager.shared.setCompletion()
+        let generator = UINotificationFeedbackGenerator()
+        generator.prepare()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            generator.notificationOccurred(.success)
+        }
     }
 
     private func resetCounter() {
         counter = 0
         UserDefaults.standard.set(counter, forKey: "counter")
         
-        // Use our HapticManager for reset feedback
-        HapticManager.shared.reset()
+        // Add haptic feedback for reset
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.success)
     }
 
     private func updateNavigationBarAppearance() {

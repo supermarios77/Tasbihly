@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 struct SettingsView: View {
     @Environment(\.theme) private var theme
@@ -52,14 +51,14 @@ struct SettingsView: View {
                                 .foregroundColor(sectionHeaderColor)
                                 .padding(.horizontal)
                             
-                            VStack(spacing: 12) {
+                            VStack(spacing: 1) {
                                 soundToggle
-                                    .padding()
-                                    .background(listRowBackground)
+                                .padding()
+                                .background(listRowBackground)
                                 
                                 targetStepper()
-                                    .padding()
-                                    .background(listRowBackground)
+                                .padding()
+                                .background(listRowBackground)
                             }
                         }
                         
@@ -81,10 +80,10 @@ struct SettingsView: View {
                                             .foregroundColor(theme.primary)
                                     }
                                 }
-                                .toggleStyle(SwitchToggleStyle(tint: theme.primary))
                                 .onChange(of: notificationManager.isNotificationsEnabled) { newValue in
                                     HapticManager.shared.selectionChanged()
                                     if newValue {
+                                        // Additional success feedback when enabling notifications
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                             HapticManager.shared.success()
                                         }
@@ -110,7 +109,6 @@ struct SettingsView: View {
                                                  displayedComponents: .hourAndMinute)
                                             .labelsHidden()
                                             .accentColor(theme.primary)
-                                            .colorScheme(colorScheme)
                                             .onChange(of: notificationManager.reminderTime) { _ in
                                                 HapticManager.shared.selectionChanged()
                                             }
@@ -297,9 +295,6 @@ struct SettingsView: View {
             Spacer()
             
             Stepper("\(target)", value: $target, in: 11...999, step: 11)
-                .accentColor(theme.primary)
-                .colorScheme(colorScheme)
-                .foregroundColor(theme.adaptiveTextColor)
                 .onChange(of: target) { _ in
                     HapticManager.shared.selectionChanged()
                 }
@@ -327,7 +322,6 @@ struct ThemePicker: View {
                 ForEach(0..<appThemes.count, id: \.self) { index in
                     Button(action: {
                         selectedThemeIndex = index
-                        HapticManager.shared.mediumImpact()
                     }) {
                         HStack {
                             Text(appThemes[index].name)
