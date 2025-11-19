@@ -97,17 +97,12 @@ struct DhikrSelectorView: View {
                             if CustomDhikrManager.shared.isPremiumUnlocked {
                                 Button(action: {
                                     showingAddSheet = true
+                                    HapticManager.shared.mediumImpact()
                                 }) {
                                     Image(systemName: "plus.circle.fill")
                                         .font(.system(size: 20))
                                         .foregroundColor(theme.primary)
                                 }
-                            }
-                            // Haptic feedback
-                            HapticManager.shared.mediumImpact()
-                            // Simulate loading for smooth transition
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                withAnimation { isLoading = false }
                             }
                         }
                     }
