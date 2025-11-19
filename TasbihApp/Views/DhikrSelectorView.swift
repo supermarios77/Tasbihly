@@ -14,7 +14,6 @@ struct DhikrSelectorView: View {
     @State private var showFavoriteToast = false
     @State private var lastFavoriteAction = ""
     @State private var selectedThemeIndex = 0
-    @State private var showingAddSheet = false
     
     private var filteredDhikrList: [Dhikr] {
         let baseList = showFavorites ? 
@@ -92,19 +91,6 @@ struct DhikrSelectorView: View {
                         }
                         
                         Spacer()
-                        
-                        HStack(spacing: 12) {
-                            if CustomDhikrManager.shared.isPremiumUnlocked {
-                                Button(action: {
-                                    showingAddSheet = true
-                                    HapticManager.shared.mediumImpact()
-                                }) {
-                                    Image(systemName: "plus.circle.fill")
-                                        .font(.system(size: 20))
-                                        .foregroundColor(theme.primary)
-                                }
-                            }
-                        }
                     }
                     .padding(.horizontal)
                     .padding(.bottom, 4)
@@ -126,48 +112,6 @@ struct DhikrSelectorView: View {
                         ScrollViewReader { proxy in
                             ScrollView {
                                 LazyVStack(spacing: 12) {
-                                    // Custom Dhikrs Section
-                                    if CustomDhikrManager.shared.isPremiumUnlocked && !showFavorites {
-                                        let customDhikrs = CustomDhikrManager.shared.customDhikrs.filter { 
-                                            searchText.isEmpty ? $0.category == selectedCategory : 
-                                            $0.phrase.localizedCaseInsensitiveContains(searchText) ||
-                                            $0.transliteration.localizedCaseInsensitiveContains(searchText) ||
-                                            $0.translation.localizedCaseInsensitiveContains(searchText)
-                                        }
-                                        
-                                        if !customDhikrs.isEmpty {
-                                            HStack {
-                                                Text("Custom Dhikrs")
-                                                    .font(.headline)
-                                                    .foregroundColor(theme.textColor)
-                                                Spacer()
-                                            }
-                                            .padding(.horizontal)
-                                            
-                                            ForEach(customDhikrs) { customDhikr in
-                                                DhikrCard(
-                                                    dhikr: customDhikr.toDhikr(),
-                                                    isSelected: customDhikr.toDhikr() == selectedDhikr,
-                                                    theme: theme,
-                                                    isAnimating: selectedDhikrId == customDhikr.id && isAnimating,
-                                                    isFavorite: false,
-                                                    onFavorite: {}
-                                                )
-                                                .id(customDhikr.id)
-                                                .onTapGesture {
-                                                    selectDhikr(customDhikr.toDhikr())
-                                                }
-                                                .contextMenu {
-                                                    Button(action: {
-                                                        CustomDhikrManager.shared.deleteCustomDhikr(customDhikr)
-                                                    }) {
-                                                        Label("Delete", systemImage: "trash")
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    
                                     // Regular Dhikrs
                                     ForEach(filteredDhikrList) { dhikr in
                                         DhikrCard(
@@ -210,18 +154,6 @@ struct DhikrSelectorView: View {
             }
             .navigationTitle(showFavorites ? "Favorites" : "Dhikr Library")
             .navigationBarTitleDisplayMode(.inline)
-            .navigationBarItems(
-                trailing: !showFavorites && CustomDhikrManager.shared.isPremiumUnlocked ?
-                    Button(action: {
-                        showingAddSheet = true
-                    }) {
-                        Image(systemName: "plus.circle.fill")
-                            .foregroundColor(theme.primary)
-                    } : nil
-            )
-            .sheet(isPresented: $showingAddSheet) {
-                AddCustomDhikrView()
-            }
             .onChange(of: searchText) { newValue in
                 if !newValue.isEmpty {
                     // Haptic feedback when search starts

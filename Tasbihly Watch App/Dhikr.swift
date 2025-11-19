@@ -65,8 +65,6 @@ struct Dhikr: Identifiable, Hashable {
         Dhikr(name: "لا إله إلا الله", transliteration: "La ilaha illallah", translation: "There is no god but Allah", count: 33),
         Dhikr(name: "أستغفر الله", transliteration: "Astaghfirullah", translation: "I seek forgiveness from Allah", count: 33),
         Dhikr(name: "بسم الله", transliteration: "Bismillah", translation: "In the name of Allah", count: 33),
-        Dhikr(name: "ما شاء الله", transliteration: "Masha'Allah", translation: "As Allah has willed", count: 33),
-        Dhikr(name: "إن شاء الله", transliteration: "Insha'Allah", translation: "If Allah wills", count: 33),
         Dhikr(name: "سبحان الله وبحمده", transliteration: "Subhan Allah wa bihamdi", translation: "Glory be to Allah and Praise Him", count: 33),
         Dhikr(name: "اللهم صل على محمد", transliteration: "Allahumma salli ala Muhammad", translation: "O Allah, send blessings upon Muhammad", count: 33),
         Dhikr(name: "اللهم بارك على محمد", transliteration: "Allahumma barik ala Muhammad", translation: "O Allah, bless Muhammad", count: 33),

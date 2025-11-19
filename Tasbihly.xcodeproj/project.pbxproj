@@ -6,20 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		AC6BDCDD2D1AF8F5004275FC /* Tasbihly Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = AC6BDCD02D1AF8F3004275FC /* Tasbihly Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-/* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		AC6BDCDB2D1AF8F5004275FC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CDF44F5B2CC57F9600D3A18C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = AC6BDCCF2D1AF8F3004275FC;
-			remoteInfo = "Tasbihly Watch App";
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		AC6BDCDE2D1AF8F5004275FC /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -27,7 +13,6 @@
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
 			dstSubfolderSpec = 16;
 			files = (
-				AC6BDCDD2D1AF8F5004275FC /* Tasbihly Watch App.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -35,16 +20,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		AC6BDCD02D1AF8F3004275FC /* Tasbihly Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Tasbihly Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDF44F632CC57F9600D3A18C /* TasbihApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TasbihApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		AC6BDCD12D1AF8F3004275FC /* Tasbihly Watch App */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Tasbihly Watch App";
-			sourceTree = "<group>";
-		};
 		CDF44F652CC57F9600D3A18C /* TasbihApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = TasbihApp;
@@ -53,13 +32,6 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		AC6BDCCD2D1AF8F3004275FC /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CDF44F602CC57F9600D3A18C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -74,7 +46,6 @@
 			isa = PBXGroup;
 			children = (
 				CDF44F652CC57F9600D3A18C /* TasbihApp */,
-				AC6BDCD12D1AF8F3004275FC /* Tasbihly Watch App */,
 				CDF44F642CC57F9600D3A18C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -83,7 +54,6 @@
 			isa = PBXGroup;
 			children = (
 				CDF44F632CC57F9600D3A18C /* TasbihApp.app */,
-				AC6BDCD02D1AF8F3004275FC /* Tasbihly Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -91,28 +61,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		AC6BDCCF2D1AF8F3004275FC /* Tasbihly Watch App */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = AC6BDCE12D1AF8F5004275FC /* Build configuration list for PBXNativeTarget "Tasbihly Watch App" */;
-			buildPhases = (
-				AC6BDCCC2D1AF8F3004275FC /* Sources */,
-				AC6BDCCD2D1AF8F3004275FC /* Frameworks */,
-				AC6BDCCE2D1AF8F3004275FC /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				AC6BDCD12D1AF8F3004275FC /* Tasbihly Watch App */,
-			);
-			name = "Tasbihly Watch App";
-			packageProductDependencies = (
-			);
-			productName = "Tasbihly Watch App";
-			productReference = AC6BDCD02D1AF8F3004275FC /* Tasbihly Watch App.app */;
-			productType = "com.apple.product-type.application";
-		};
 		CDF44F622CC57F9600D3A18C /* TasbihApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CDF44F712CC57F9900D3A18C /* Build configuration list for PBXNativeTarget "TasbihApp" */;
@@ -125,7 +73,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				AC6BDCDC2D1AF8F5004275FC /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				CDF44F652CC57F9600D3A18C /* TasbihApp */,
@@ -147,9 +94,6 @@
 				LastSwiftUpdateCheck = 1610;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
-					AC6BDCCF2D1AF8F3004275FC = {
-						CreatedOnToolsVersion = 16.1;
-					};
 					CDF44F622CC57F9600D3A18C = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -170,19 +114,11 @@
 			projectRoot = "";
 			targets = (
 				CDF44F622CC57F9600D3A18C /* TasbihApp */,
-				AC6BDCCF2D1AF8F3004275FC /* Tasbihly Watch App */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		AC6BDCCE2D1AF8F3004275FC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CDF44F612CC57F9600D3A18C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -193,13 +129,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		AC6BDCCC2D1AF8F3004275FC /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CDF44F5F2CC57F9600D3A18C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -209,89 +138,7 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		AC6BDCDC2D1AF8F5004275FC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = AC6BDCCF2D1AF8F3004275FC /* Tasbihly Watch App */;
-			targetProxy = AC6BDCDB2D1AF8F5004275FC /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		AC6BDCDF2D1AF8F5004275FC /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_ASSET_PATHS = "\"Tasbihly Watch App/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=watchos*]" = ARWAMX5JP6;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Tasbihly;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.bytecraft.Tasbihly;
-				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.bytecraft.Tasbihly.watchkitapp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=watchos*]" = "Tasbihly WatchOS";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 11.1;
-			};
-			name = Debug;
-		};
-		AC6BDCE02D1AF8F5004275FC /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2;
-				DEVELOPMENT_ASSET_PATHS = "\"Tasbihly Watch App/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=watchos*]" = ARWAMX5JP6;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = Tasbihly;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.bytecraft.Tasbihly;
-				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.bytecraft.Tasbihly.watchkitapp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=watchos*]" = "Tasbihly WatchOS";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 11.1;
-			};
-			name = Release;
-		};
 		CDF44F6F2CC57F9900D3A18C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -490,15 +337,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		AC6BDCE12D1AF8F5004275FC /* Build configuration list for PBXNativeTarget "Tasbihly Watch App" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				AC6BDCDF2D1AF8F5004275FC /* Debug */,
-				AC6BDCE02D1AF8F5004275FC /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		CDF44F5E2CC57F9600D3A18C /* Build configuration list for PBXProject "Tasbihly" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
